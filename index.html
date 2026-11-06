@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Link Vault — your saved links, searchable</title>
+<meta name="description" content="Save video links, auto-categorise them, search them, and plan trips and outings from them.">
+<meta name="theme-color" content="#111827">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">🔗</span>
+    <div>
+      <h1>Link Vault</h1>
+      <p class="tagline">Save links. Find them. Plan with them.</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="exportBtn" class="btn ghost" type="button">Export</button>
+    <label class="btn ghost file-btn">Import
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </label>
+  </div>
+</header>
+
+<main>
+  <section class="card add-card">
+    <h2>Add a link</h2>
+    <form id="addForm">
+      <input id="urlInput" type="text" inputmode="url" placeholder="Paste a link — Instagram reel, YouTube Short, TikTok, any URL" required autocomplete="off">
+      <input id="noteInput" type="text" placeholder="Optional note (e.g. “Austin trip — hotel option”)" autocomplete="off">
+      <button class="btn primary" type="submit">Analyse &amp; add</button>
+    </form>
+    <p id="addStatus" class="status" aria-live="polite"></p>
+
+    <div id="reviewPanel" class="review" hidden>
+      <h3>Check the details</h3>
+      <p class="hint" id="fetchHint"></p>
+      <label>Title
+        <input id="revTitle" type="text">
+      </label>
+      <label>Author
+        <input id="revAuthor" type="text">
+      </label>
+      <label>Description
+        <textarea id="revDesc" rows="3" placeholder="Paste the caption / description here if it came back empty"></textarea>
+      </label>
+      <p>Category: <span id="revCategory" class="badge"></span></p>
+      <div class="row">
+        <button id="saveLinkBtn" class="btn primary" type="button">Save link</button>
+        <button id="cancelAddBtn" class="btn ghost" type="button">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card plan-card">
+    <h2>Plan something</h2>
+    <div class="goal-row">
+      <button class="btn goal" type="button" data-goal="trip">✈️ Plan a trip</button>
+      <button class="btn goal" type="button" data-goal="restaurant">🍽️ Find a restaurant</button>
+      <button class="btn goal" type="button" data-goal="learn">🎓 Learn something</button>
+    </div>
+    <div class="custom-plan">
+      <input id="customKeyword" type="text" placeholder="Or type a keyword, e.g. “Goa”, “sushi”, “yoga”" autocomplete="off">
+      <button id="customPlanBtn" class="btn" type="button">Plan it</button>
+    </div>
+    <div id="planResults" class="plan-results" aria-live="polite"></div>
+  </section>
+
+  <section class="toolbar card">
+    <input id="searchInput" type="search" placeholder="Search your links…" autocomplete="off">
+    <div id="categoryChips" class="chips"></div>
+    <div id="platformChips" class="chips"></div>
+    <p id="countLine" class="count"></p>
+  </section>
+
+  <section id="grid" class="grid" aria-live="polite"></section>
+  <p id="emptyState" class="empty" hidden>No links match yet. Add a link above to start your vault.</p>
+</main>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Link details">
+    <button id="modalClose" class="modal-close" type="button" aria-label="Close">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Link Vault works offline after first load. No login, no tracking — your links stay on your device unless you export them.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
