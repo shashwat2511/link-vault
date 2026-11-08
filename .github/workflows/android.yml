@@ -1,0 +1,49 @@
+# Build the Link Vault debug APK
+# Runs on every push to main and on manual dispatch.
+# The APK is uploaded as a build artifact named "link-vault-apk".
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Copy the web app (repo root) into www/ and sync it into the Android project.
+      # Capacitor rejects webDir "." so the app lives in www/ as a build copy.
+      - name: Sync web assets into Android project
+        run: npm run sync:android
+
+      - name: Build debug APK
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-vault-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
